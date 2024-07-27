@@ -134,20 +134,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "circlers"
-version = "0.1.0"
-dependencies = [
- "argmin",
- "argmin-math",
- "argmin-observer-slog",
- "blas-src",
- "ndarray",
- "ndarray-linalg",
- "openblas-src",
- "pyo3",
-]
-
-[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -902,6 +888,20 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.71",
+]
+
+[[package]]
+name = "shapers"
+version = "0.1.0"
+dependencies = [
+ "argmin",
+ "argmin-math",
+ "argmin-observer-slog",
+ "blas-src",
+ "ndarray",
+ "ndarray-linalg",
+ "openblas-src",
+ "pyo3",
 ]
 
 [[package]]

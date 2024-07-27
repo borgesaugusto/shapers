@@ -1,12 +1,12 @@
-use crate::aux_funcs::{get_distance, get_circle_centroid};
+use crate::{aux_funcs::{get_distance, get_circle_centroid, self}, errors::LSQError};
 use argmin::{
     core::{observers::ObserverMode, CostFunction, Error, Executor, State},
     solver::neldermead::NelderMead,
 }; 
-// use ndarray::prelude::*;
-use ndarray::{s, array, Array1, Array2, Array, stack, Axis, AssignElem, stack_new_axis, concatenate};
-use ndarray_linalg::{LeastSquaresSvd, LeastSquaresSvdInto, LeastSquaresSvdInPlace, SVD};
+use ndarray::{s, array, Array1, Array, stack, Axis, concatenate};
+use ndarray_linalg::{SVD};
 use argmin_observer_slog::SlogLogger;
+use pyo3::prelude::*;
 
 pub struct Circle {
     pub xs: Vec<f64>,
@@ -29,42 +29,51 @@ impl CostFunction for Circle {
     
     fn cost(&self, params: &Self::Param) -> Result<Self::Output, Error> {
         let center = vec![params[0], params[1]];
-        // Ok((|center| mean_distance_to_center(&self, center))(center))
         Ok(self.mean_distance_to_center(center))
     }
 }
 
-
-// pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>) -> Result<(), Error> {
-pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
-    // this uses Levenberg-Marquardt optimization from mathru
-    // let circle = aux_funcs::Circle { xs: xs.clone(), ys: ys.clone() }; 
- 
-    let vector_of_params = vec![vec![1.0, 1.0]];
-    let nm_solver = NelderMead::new(vector_of_params);
-    let circle = Circle { xs: xs.clone(), ys: ys.clone() };
-
-    // run solvefr
-    let result = Executor::new(circle, nm_solver)
-        .configure(|state| state.max_iters(100))
-        .add_observer(SlogLogger::term(), ObserverMode::Always)
-        .run();
-
-    // println!(
-    //         "Parameter: {}",
-    //         result.unwrap().state.get_best_param().expect("Found params")
-    //     );
-    let final_result = result.unwrap();
-    println!("{}", final_result.state.get_best_param().expect("Found params")[0]);
-    return vec![0.0, 0.0];
-    // return *result.state.get_best_param().expect("Found params");
-    // return *result.unwrap().state.get_best_param().expect("Found params");
-    // Ok(())
-    // result.unwrap()
+#[pyfunction]
+pub fn fit_geometrical(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
+    aux_funcs::get_circle_centroid(xs, ys)
 }
 
+#[pyfunction]
+pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>) -> Result<Vec<f64>, LSQError> {
+    if xs.len() != ys.len() {
+        eprint!("The number of x and y points must be the same.");
+    }
+    
+    if xs.len() > 10000 {
+        eprint!("The number of points is too high. Might lead to performance issues");
+    }
+
+
+    let circle = Circle { xs: xs.clone(), ys: ys.clone() };
+    let mut simplicial_vertices = vec![];
+    let ave_distance = circle.mean_distance_to_center(aux_funcs::get_circle_centroid(xs.clone(), ys.clone()));
+    let geom_center = aux_funcs::get_circle_centroid(xs.clone(), ys.clone());
+    let n_vertices = 20;
+    for i in 0..n_vertices {
+        let angle = 2.0 * std::f64::consts::PI * (i as f64) / n_vertices as f64;
+        let x = geom_center[0] + ave_distance * 5.0 * (angle as f64).cos();
+        let y = geom_center[1] + ave_distance * 5.0 * (angle as f64).sin();
+        simplicial_vertices.push(vec![x, y]);
+    }    
+
+    let nm_solver = NelderMead::new(simplicial_vertices)
+                                .with_sd_tolerance(1e-15_f64)?;
+    let result = Executor::new(circle, nm_solver)
+        .configure(|state| state.max_iters(1000))
+        // .add_observer(SlogLogger::term(), ObserverMode::Always)
+        .run();
+
+    let final_result = result.unwrap();
+    return Ok(final_result.state.get_best_param().expect("Found params").to_vec());
+}
+
+#[pyfunction]
 pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
-    // this uses Taubin's SVD method
     let c0 = get_circle_centroid(xs.clone(), ys.clone());
     let x_rel_center = xs.iter().map(|x| x - c0[0]).collect::<Vec<f64>>();
     let y_rel_center = ys.iter().map(|y| y - c0[1]).collect::<Vec<f64>>();
@@ -94,18 +103,25 @@ pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[ignore]
     #[test]
     fn test_fit_lsq() {
-        let xs = vec![-1.0, 0.0, 1.0];
-        let ys = vec![0.0, 1.0, 0.0];
-        // assert_eq!(fit_lsq(xs, ys), 0.0);
-        assert_eq!(fit_lsq(xs, ys), vec![0.0, 0.0]);
+        let precision: f64 = 100000000.0;
+        let xs = vec![-1.0, 0.0, 1.0, 0.0];
+        let ys = vec![0.0, 1.0, 0.0, -1.0];
+        let mut res = fit_lsq(xs, ys);
+        res = res.map(|x| x.iter().map(|y| ( y.round() * precision ) / precision).collect());
+        assert_eq!(res.unwrap(), vec![0.0, 0.0]);
     }
     #[test]
     fn test_fit_taubin() {
         let xs = vec![0.0, 4.0, 2.0, 2.0];
         let ys = vec![0.0, 0.0, 2.0, -2.0];
         assert_eq!(taubin_svd(xs, ys), vec![2.0, 0.0]);
+    }
+    #[test]
+    fn test_fit_geometrical() {
+        let xs = vec![-1.0, 0.0, 1.0, 0.0];
+        let ys = vec![0.0, 1.0, 0.0, -1.0];
+        assert_eq!(fit_geometrical(xs, ys), vec![0.0, 0.0]);
     }
 }
