@@ -42,8 +42,8 @@ jobs:
           python-version: 3.x
       - name : Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libssl-dev
+          sudo apt update
+          sudo apt install -y libssl-dev openssl-devel
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
