@@ -45,12 +45,11 @@ jobs:
           python -m venv .venv
           sudo apt update
           sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
-      - name: Build wheels
-        run: |
           source .venv/bin/activate
           pip install -U pip
           OPENSSL_DIR=/opt/borgesaugusto/shapers/openssl
           OPENSSL_STATIC=1
+      - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
