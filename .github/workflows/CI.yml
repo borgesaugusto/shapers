@@ -48,10 +48,6 @@ jobs:
       - name : Install dependencies
         run: |
           python -m venv .venv
-          source .venv/bin/activate
-          sudo apt update
-          sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
-          pip install -U pip
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -59,6 +55,14 @@ jobs:
           args: --release --out dist --find-interpreter
           sccache: 'true'
           manylinux: auto
+          before-script-linux: |
+            sudo apt update
+          source .venv/bin/activate
+          sudo apt update
+          sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
+          pip install -U pip
+            sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
+
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
