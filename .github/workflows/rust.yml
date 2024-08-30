@@ -17,7 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
-      run: sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
+      run: |
+        sudo apt update
+        sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
