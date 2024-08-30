@@ -45,9 +45,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - name : Install dependencies
-        run: |
-          python -m venv .venv
+      # - name : Install dependencies
+      #   run: |
+      #     python -m venv .venv
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -57,10 +57,10 @@ jobs:
           manylinux: auto
           before-script-linux: |
             sudo apt update
-          source .venv/bin/activate
-          sudo apt update
-          sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
-          pip install -U pip
+            source .venv/bin/activate
+            sudo apt update
+            sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
+            pip install -U pip
             sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
 
       - name: Upload wheels
