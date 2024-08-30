@@ -26,37 +26,37 @@ jobs:
           - runner: ubuntu-latest
             target: x86_64
           # - runner: ubuntu-latest
-          #   target: x86
-          # - runner: ubuntu-latest
-          #   target: aarch64
-          # - runner: ubuntu-latest
-          #   target: armv7
-          # - runner: ubuntu-latest
-          #   target: s390x
-          # - runner: ubuntu-latest
-          #   target: ppc64le
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-     - name : Install dependencies
-       run: |
-         python -m venv .venv
-         sudo apt update
-         sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
-     - name: Build wheels
-       run: |
-         source .venv/bin/activate
-         pip install -U pip
-         OPENSSL_DIR=/opt/borgesaugusto/shapers/openssl
-         OPENSSL_STATIC=1
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out dist --find-interpreter
-          sccache: 'true'
-          manylinux: auto
+            # target: x86
+              # - runner: ubuntu-latest
+              #   target: aarch64
+              # - runner: ubuntu-latest
+              #   target: armv7
+              # - runner: ubuntu-latest
+              #   target: s390x
+              # - runner: ubuntu-latest
+              #   target: ppc64le
+            steps:
+              - uses: actions/checkout@v4
+          - uses: actions/setup-python@v5
+            with:
+              python-version: 3.x
+          - name : Install dependencies
+            run: |
+              python -m venv .venv
+              sudo apt update
+              sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
+          - name: Build wheels
+            run: |
+              source .venv/bin/activate
+              pip install -U pip
+              OPENSSL_DIR=/opt/borgesaugusto/shapers/openssl
+              OPENSSL_STATIC=1
+            uses: PyO3/maturin-action@v1
+            with:
+              target: ${{ matrix.platform.target }}
+            args: --release --out dist --find-interpreter
+            sccache: 'true'
+            manylinux: auto
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
