@@ -12,10 +12,10 @@ on:
     tags:
       - '*'
   pull_request:
-    workflow_dispatch:
+  workflow_dispatch:
 
-      permissions:
-        contents: read
+permissions:
+  contents: read
 
 jobs:
   linux:
@@ -38,25 +38,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-      with:
+        with:
           python-version: 3.x
       - name : Install dependencies
         run: |
-          # python -m venv .venv
+          python -m venv .venv
           sudo apt update
           sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
       - name: Build wheels
-        # run: |
-        #   source .venv/bin/activate
-        #   pip install -U pip
-        #   OPENSSL_DIR=/opt/borgesaugusto/shapers/openssl
-        #   OPENSSL_STATIC=1
+        run: |
+          source .venv/bin/activate
+          pip install -U pip
+          OPENSSL_DIR=/opt/borgesaugusto/shapers/openssl
+          OPENSSL_STATIC=1
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
-        args: --release --out dist --find-interpreter
-        sccache: 'true'
-        manylinux: auto
+          args: --release --out dist --find-interpreter
+          sccache: 'true'
+          manylinux: auto
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
