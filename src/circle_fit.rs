@@ -121,10 +121,8 @@ pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
 
 
 // methods for differnt lsq algorithms
-// pub fn lsq_nelder_mead(xs: Vec<f64>, ys: Vec<f64>) -> Result<OptimizationResult<Circle, NelderMead<Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, (), (), (), (), f64>>, LSQError> 
 pub fn lsq_nelder_mead(circle: Circle) -> Result<OptimizationResult<Circle, NelderMead<Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, (), (), (), (), f64>>, LSQError> 
 {
-    // let circle = Circle { xs: xs.clone(), ys: ys.clone() };
     let mut simplicial_vertices = vec![];
     let geom_center = circle.get_circle_centroid();
     let ave_distance = circle.mean_distance_to_center(geom_center.clone());

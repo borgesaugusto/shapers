@@ -27,6 +27,7 @@ ndarray = "0.15.6"
 ndarray-linalg = "0.16.0"
 
 openssl = { version = "0.10", features = ["vendored"] }
+openssl-sys = { version = "0.9", features = ["vendored"] }
 
 blas-src = { version = "0.10", features = ["openblas"] }
 
