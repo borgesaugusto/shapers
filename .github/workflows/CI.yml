@@ -14,6 +14,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  OPENSSL_DIR: /opt/borgesaugusto/shapers/openssl
+  OPENSSL_STATIC: 1
+
+
 permissions:
   contents: read
 
@@ -43,12 +48,10 @@ jobs:
       - name : Install dependencies
         run: |
           python -m venv .venv
+          source .venv/bin/activate
           sudo apt update
           sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
-          source .venv/bin/activate
           pip install -U pip
-          OPENSSL_DIR=/opt/borgesaugusto/shapers/openssl
-          OPENSSL_STATIC=1
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
