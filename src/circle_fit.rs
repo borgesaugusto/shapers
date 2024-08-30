@@ -4,8 +4,8 @@ use argmin::{
     solver::{neldermead::NelderMead, linesearch::MoreThuenteLineSearch, quasinewton::LBFGS},
 }; 
 use ndarray::{s, array, Array1, Array, stack, Axis, concatenate};
-use ndarray_linalg::{SVD};
-use argmin_observer_slog::SlogLogger;
+use ndarray_linalg::SVD;
+// use argmin_observer_slog::SlogLogger;
 use pyo3::prelude::*;
 
 pub struct Circle {
