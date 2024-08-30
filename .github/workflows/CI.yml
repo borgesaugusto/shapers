@@ -63,7 +63,7 @@ jobs:
                 ;;
               "x86" | "x86_64")
                 yum update -y
-                yum install -y openssl openssl-devel
+                yum install -y openssl openssl-devel perl-IPC-Cmd
                 ;;
             esac          #   source .venv/bin/activate
           #   sudo apt update
