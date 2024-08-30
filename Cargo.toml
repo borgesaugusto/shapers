@@ -25,7 +25,7 @@ argmin-math = "0.4.0"
 argmin-observer-slog = "0.1.0"
 ndarray = "0.15.6"
 ndarray-linalg = "0.16.0"
-
+openssl = { version = "0.10", features = ["vendored"] }
 blas-src = { version = "0.8", features = ["openblas"] }
 openblas-src = { version = "0.10", features = ["cblas", "system"] }
 
