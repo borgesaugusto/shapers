@@ -43,7 +43,7 @@ jobs:
       - name : Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y openssl libssl-dev
+          sudo apt install -y openssl libssl-dev pkg-config
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
