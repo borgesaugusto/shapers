@@ -35,5 +35,5 @@
   [dependencies.openblas-src]
   version = "0.10"
   # default-features = false
-  features = ["cblas", "lapacke"]
+  features = ["cblas", "lapacke", "static"]
 
