@@ -50,7 +50,7 @@ jobs:
               "x86" | "x86_64")
                 yum update -y
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
-                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel.i686
+                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel-0.3.26-2.el9.i686
                 else
                   yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 fi
