@@ -31,9 +31,3 @@
 # openssl-sys = { version = "0.9", features = ["vendored"] }
 
   # openblas-src = { version = "0.10", features = ["cblas", "lapacke", "static"] }
-
-  [dependencies.openblas-src]
-  version = "0.10"
-  # default-features = false
-  features = ["cblas", "lapacke"]
-

@@ -798,7 +798,6 @@ dependencies = [
  "blas-src",
  "ndarray",
  "ndarray-linalg",
- "openblas-src",
  "pyo3",
 ]
 
