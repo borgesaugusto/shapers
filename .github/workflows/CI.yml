@@ -52,7 +52,7 @@ jobs:
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
                   yum install -y https://archives.fedoraproject.org/pub/archive/epel/6/i386/epel-release-6-8.noarch.rpm
                   yum repolist
-                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel
+                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 else
                   yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 fi
