@@ -20,6 +20,7 @@
 
   [dependencies]
   pyo3 = { version = "0.22.1", features = ["extension-module"] }
+  blas-src = { version = "0.9", features = ["openblas"] }
   argmin = "0.10.0"
   argmin-math = "0.4.0"
 # argmin-observer-slog = "0.1.0"
@@ -29,6 +30,10 @@
 # openssl = { version = "0.10", features = ["vendored"] }
 # openssl-sys = { version = "0.9", features = ["vendored"] }
 
-  blas-src = { version = "0.9", features = ["openblas"] }
   # openblas-src = { version = "0.10", features = ["cblas", "lapacke", "static"] }
+
+  [dependencies.openblas-src]
+  version = "0.10"
+  # default-features = false
+  features = ["static"]
 
