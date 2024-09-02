@@ -8,8 +8,11 @@ use ndarray_linalg::SVD;
 // use argmin_observer_slog::SlogLogger;
 use pyo3::prelude::*;
 
+/// Manages the Circle functions, to then implement [`Circle::CostFunction`] and [`Circle::Gradient`]
 pub struct Circle {
+    /// X coordinates of the points
     pub xs: Vec<f64>,
+    /// Y coordinates of the points
     pub ys: Vec<f64>,
 
 }
@@ -45,35 +48,31 @@ impl Gradient for Circle {
     type Gradient = Vec<f64>;
 
     fn gradient(&self, pararms: &Self::Param) -> Result<Self::Gradient, Error> {
-        let deriv_x = self.xs.iter().map(|x| x - pararms[0]).collect::<Vec<f64>>();
-        let deriv_y = self.ys.iter().map(|y| y - pararms[1]).collect::<Vec<f64>>();
+        let deriv_x = self.xs.iter().map(|x| -(x - pararms[0])).sum();
+        let deriv_y = self.ys.iter().map(|y| -(y - pararms[1])).sum();
         
-        let deriv_x = Array::from_vec(deriv_x);
-        let deriv_y = Array::from_vec(deriv_y);
-        
-        let x_normed = - &deriv_x;
-        let y_normed = - &deriv_y;
+        let jacobian = vec![deriv_x, deriv_y];
 
-        let jacobian = vec![x_normed.sum(), y_normed.sum()];
-
-        let jacobian_vec = jacobian.to_vec();
-        Ok(jacobian_vec)
+        Ok(jacobian)
 
     }
 }
-
+/// Finds the probable center by taking the average of the points
 #[pyfunction]
 pub fn fit_geometrical(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
     aux_funcs::get_circle_centroid(xs, ys)
 }
 
+/// Fits the cirlce using a Least-Squares methods. Currently, only Nelder-Mead and L-BFGS are supported.
 #[pyfunction]
+#[pyo3(signature = (xs, ys, method="lbfgs"))]
 pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>, method: Option<&str>) -> Result<Vec<f64>, LSQError> {
     if xs.len() != ys.len() {
         eprint!("The number of x and y points must be the same.");
     }
-    
+
     let circle = Circle { xs: xs.clone(), ys: ys.clone() };
+    let method = Some(method.unwrap_or("lbfgs"));
     match method {
         Some("nelder_mead") => {
             // let final_result = lsq_nelder_mead(xs, ys).unwrap();

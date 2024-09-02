@@ -12,8 +12,8 @@ classifiers = [
 keywords = ["circle", "shapes", "geometry"]
 
 
-[tool.maturin]
-bindings = "bin"
+# [tool.maturin]
+# bindings = "bin"
 
 [project.urls]
 Homepage = "https://github.com/borgesaugusto/shapers"

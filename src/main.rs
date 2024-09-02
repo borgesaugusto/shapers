@@ -3,7 +3,7 @@ fn main() {
     let n_points = 10000;
     let all_angles = (0..n_points).map(|i| 2.0 * std::f64::consts::PI * (i as f64) / n_points as f64).collect::<Vec<f64>>();
     let circle_radius = 5.0;
-    let std = 0.0;
+    let _std = 0.0;
     // let xs = vec![0.0, 4.0, 2.0, 2.0];
     // let ys = vec![0.0, 0.0, 2.0, -2.0];
     

@@ -14,9 +14,9 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  OPENSSL_DIR: /opt/borgesaugusto/shapers/openssl
-  OPENSSL_STATIC: 1
+# env:
+#   OPENSSL_DIR: /opt/borgesaugusto/shapers/openssl
+#   OPENSSL_STATIC: 1
 
 
 permissions:
@@ -30,24 +30,21 @@ jobs:
         platform:
           - runner: ubuntu-latest
             target: x86_64
-        # - runner: ubuntu-latest
-        #   target: x86
-        # - runner: ubuntu-latest
-        #   target: aarch64
-        # - runner: ubuntu-latest
-        #   target: armv7
-        # - runner: ubuntu-latest
-        #   target: s390x
-        # - runner: ubuntu-latest
-        #   target: ppc64le
+          - runner: ubuntu-latest
+            target: x86
+          - runner: ubuntu-latest
+            target: aarch64
+          - runner: ubuntu-latest
+            target: armv7
+          - runner: ubuntu-latest
+            target: s390x
+          - runner: ubuntu-latest
+            target: ppc64le
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      # - name : Install dependencies
-      #   run: |
-      #     python -m venv .venv
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -59,18 +56,13 @@ jobs:
             case "${{ matrix.platform.target }}" in
               "aarch64" | "armv7" | "s390x" | "ppc64le")
                 sudo apt-get update
-                sudo apt-get install -y pkg-config libssl-dev
+                sudo apt-get install -y pkg-config libssl-dev perl-IPC-Cmd
                 ;;
               "x86" | "x86_64")
                 yum update -y
                 yum install -y openssl openssl-devel perl-IPC-Cmd
                 ;;
-            esac          #   source .venv/bin/activate
-          #   sudo apt update
-          #   sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
-          #   pip install -U pip
-          #   sudo apt install -y openssl libssl-dev liblapack-dev libblas-dev libopenblas-dev
-
+            esac
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
