@@ -35,5 +35,5 @@
   [dependencies.openblas-src]
   version = "0.10"
   # default-features = false
-  features = ["static"]
+  features = ["system"]
 
