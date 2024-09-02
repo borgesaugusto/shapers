@@ -49,7 +49,11 @@ jobs:
                 ;;
               "x86" | "x86_64")
                 yum update -y
-                yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
+                if [ "${{ matrix.platform.target }}" == "x86" ]; then
+                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel
+                else
+                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
+                fi
                 # yum install -y openssl openssl-devel perl-IPC-Cmd
                 ;;
             esac
