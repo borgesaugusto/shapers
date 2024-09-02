@@ -50,6 +50,7 @@ jobs:
               "x86" | "x86_64")
                 yum update -y
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
+                  wget -O /etc/yum.repos.d/epel-rhsm.repo http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-subscription-manager.repo
                   subscription-manager repos --enable rhel-*-optional-rpms \
                     --enable rhel-*-extras-rpms \
                     --enable rhel-ha-for-rhel-*-server-rpms
