@@ -5,7 +5,7 @@ use std::fmt;
 pub struct LSQError(argmin::core::Error);
 
 impl From<LSQError> for PyErr {
-    fn from(error: LSQError) -> Self {
+    fn from(_error: LSQError) -> Self {
         PyValueError::new_err("LSQError")
     }
 }

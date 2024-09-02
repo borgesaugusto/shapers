@@ -1,0 +1,19 @@
+[build-system]
+requires = ["maturin>=1.0, <2.0"]
+build-backend = "maturin"
+
+[project]
+name = "shapers"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Rust",
+    "Intended Audience :: Science/Research"
+]
+keywords = ["circle", "shapes", "geometry"]
+
+
+# [tool.maturin]
+# bindings = "bin"
+
+[project.urls]
+Homepage = "https://github.com/borgesaugusto/shapers"
