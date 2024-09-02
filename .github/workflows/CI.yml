@@ -50,6 +50,10 @@ jobs:
               "x86" | "x86_64")
                 yum update -y
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
+                  subscription-manager repos --enable rhel-*-optional-rpms \
+                    --enable rhel-*-extras-rpms \
+                    --enable rhel-ha-for-rhel-*-server-rpms
+                  yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                   yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel
                 else
                   yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
