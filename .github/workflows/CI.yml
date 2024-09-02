@@ -60,7 +60,7 @@ jobs:
                 ;;
               "x86" | "x86_64")
                 yum update -y
-                yum install -y openssl openssl-devel perl-IPC-Cmd
+                yum install -y openssl openssl-devel perl-IPC-Cmd liblapack-dev libblas-dev libopenblas-dev
                 ;;
             esac
       - name: Upload wheels
