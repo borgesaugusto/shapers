@@ -51,10 +51,10 @@ jobs:
                 yum update -y
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
                   yum install -y https://archives.fedoraproject.org/pub/archive/epel/6/i386/epel-release-6-8.noarch.rpm
-                  # yum install https://buildlogs.centos.org/centos/6/extras/x86_64/centos-release-scl-7-3.el6.centos.noarch.rpmhttps://buildlogs.centos.org/centos/6/extras/x86_64/centos-release-scl-7-3.el6.centos.noarch.rpm
-                  # yum install devtoolset-8-gcc devtoolset-8-gcc-c++
-                  # scl enable devtoolset-8 bash
+                  yum install https://buildlogs.centos.org/c7-extras.i386/centos-release-scl/20160523152502/2-2.el7.centos.i386/centos-release-scl-2-2.el7.centos.noarch.rpm
                   yum repolist
+                  yum install devtoolset-7-gcc*
+                  scl enable devtoolset-7 bash
                   yum install -y binutils
                   yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 else
