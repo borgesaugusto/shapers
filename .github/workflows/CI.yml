@@ -43,7 +43,7 @@ jobs:
           sccache: 'true'
           manylinux: auto
           before-script-linux: |
-            echo `gcc --version`
+            echo `as --version`
             case "${{ matrix.platform.target }}" in
               "aarch64" | "armv7" | "s390x" | "ppc64le")
                 sudo apt-get update
@@ -52,16 +52,15 @@ jobs:
               "x86" | "x86_64")
                 yum update -y
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
-                  yum install -y https://archives.fedoraproject.org/pub/archive/epel/6/i386/epel-release-6-8.noarch.rpm
+                  # yum install -y https://archives.fedoraproject.org/pub/archive/epel/6/i386/epel-release-6-8.noarch.rpm
                   yum repolist
                   # yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                   yum install -y openssl openssl-devel perl-IPC-Cmd # lapack-devel blas-devel openblas-devel
                 else
-                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
+                  yum install -y openssl openssl-devel perl-IPC-Cmd # lapack-devel blas-devel openblas-devel
                 fi
                 ;;
             esac
-            echo `gcc --version`
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
