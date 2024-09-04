@@ -35,9 +35,9 @@ jobs:
           python-version: 3.x
       - name: Build wheels
         uses: egor-tensin/setup-gcc@v1
-          with:
-            version: latest
-            platform: ${{ matrix.platform.target }}
+        with:
+          version: latest
+          platform: ${{ matrix.platform.target }}
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
