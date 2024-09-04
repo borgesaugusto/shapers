@@ -18,15 +18,17 @@
 # extension-module = ["pyo3/extension-module"]
 # default = ["extension-module"]
 
-  [dependencies]
-  pyo3 = { version = "0.22.1", features = ["extension-module"] }
-  argmin = "0.10.0"
-  argmin-math = "0.4.0"
+[dependencies]
+pyo3 = { version = "0.22.1", features = ["extension-module"] }
+argmin = "0.10.0"
+argmin-math = "0.4.0"
 # argmin-observer-slog = "0.1.0"
-  ndarray = "0.15.6"
-  ndarray-linalg = "0.16.0"
+ndarray = "0.15.6"
+ndarray-linalg = "0.16.0"
 
-  blas-src = { version = "0.9", features = ["openblas"] }
+blas-src = { version = "0.9", features = ["openblas"] }
+
+openblas-src = { version = "0.10", features = ["cblas", "lapacke", "system"] }
 # openssl = { version = "0.10", features = ["vendored"] }
 # openssl-sys = { version = "0.9", features = ["vendored"] }
 
