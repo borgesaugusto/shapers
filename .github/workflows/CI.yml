@@ -52,7 +52,7 @@ jobs:
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
                   yum install -y https://archives.fedoraproject.org/pub/archive/epel/6/i386/epel-release-6-8.noarch.rpm
                   yum install -y https://buildlogs.centos.org/c7-extras.i386/centos-release-scl-rh/20160523152503/2-2.el7.centos.i386/centos-release-scl-rh-2-2.el7.centos.noarch.rpm
-                  yum install -y https://buildlogs.centos.org/c7-extras.i386/centos-release-scl/20160523152502/2-2.el7.centos.i386/centos-release-scl-2-2.el7.centos.noarch.rpm
+                  # yum install -y https://buildlogs.centos.org/c7-extras.i386/centos-release-scl/20160523152502/2-2.el7.centos.i386/centos-release-scl-2-2.el7.centos.noarch.rpm
                   yum repolist
                   yum install -y devtoolset-7-gcc*
                   scl enable devtoolset-7 bash
