@@ -35,7 +35,7 @@ jobs:
           python-version: 3.x
       - name: Build wheels
       - uses: egor-tensin/setup-gcc@v1
-      - with:
+        with:
           version: latest
           platform: ${{ matrix.platform.target }}
         uses: PyO3/maturin-action@v1
@@ -70,8 +70,8 @@ jobs:
                   # ../gcc-5.4.0/configure --enable-languages=c,c++ --disable-multilib
                   # make -j$(nproc) && make install
                   yum repolist
-                  yum install -y devtoolset-7-gcc*
-                  scl enable devtoolset-7 bash
+                  # yum install -y devtoolset-7-gcc*
+                  # scl enable devtoolset-7 bash
                   yum install -y binutils
                   yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 else
