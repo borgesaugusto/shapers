@@ -28,8 +28,5 @@ ndarray-linalg = "0.16.0"
 
 blas-src = { version = "0.9", features = ["openblas"] }
 
-openblas-src = { version = "0.10", features = ["cblas", "lapacke", "system"] }
-# openssl = { version = "0.10", features = ["vendored"] }
-# openssl-sys = { version = "0.9", features = ["vendored"] }
 
   # openblas-src = { version = "0.10", features = ["cblas", "lapacke", "static"] }
