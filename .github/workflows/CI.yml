@@ -43,39 +43,25 @@ jobs:
           sccache: 'true'
           manylinux: auto
           before-script-linux: |
+            echo `gcc --version`
             case "${{ matrix.platform.target }}" in
               "aarch64" | "armv7" | "s390x" | "ppc64le")
                 sudo apt-get update
-                sudo apt-get instaLl -y pkg-config libssl-dev liblapack-dev libblas-dev libopenblas-dev
+                sudo apt-get install -y pkg-config libssl-dev liblapack-dev libblas-dev libopenblas-dev
                 ;;
               "x86" | "x86_64")
                 yum update -y
                 if [ "${{ matrix.platform.target }}" == "x86" ]; then
                   yum install -y https://archives.fedoraproject.org/pub/archive/epel/6/i386/epel-release-6-8.noarch.rpm
-                  echo `gcc --version`
-                  # echo "Downloading gcc source files..."
-                  # curl https://ftp.gnu.org/gnu/gcc/gcc-5.4.0/gcc-5.4.0.tar.bz2 -O
-                  #
-                  # echo "extracting files..."
-                  # tar xvfj gcc-5.4.0.tar.bz2
-                  #
-                  # echo "Installing dependencies..."
-                  # yum install -y gmp-devel mpfr-devel libmpc-devel
-                  #
-                  # echo "Configure and install..."
-                  # mkdir gcc-5.4.0-build
-                  # cd gcc-5.4.0-build
-                  # ../gcc-5.4.0/configure --enable-languages=c,c++ --disable-multilib
-                  # make -j$(nproc) && make install
                   yum repolist
-                  # yum install -y devtoolset-7-gcc*
-                  # scl enable devtoolset-7 bash
-                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
+                  # yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
+                  yum install -y openssl openssl-devel perl-IPC-Cmd # lapack-devel blas-devel openblas-devel
                 else
                   yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 fi
                 ;;
             esac
+            echo `gcc --version`
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
