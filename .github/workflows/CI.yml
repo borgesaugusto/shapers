@@ -55,9 +55,9 @@ jobs:
                   # yum install -y https://archives.fedoraproject.org/pub/archive/epel/6/i386/epel-release-6-8.noarch.rpm
                   # yum repolist
                   # yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
-                  yum install -y openssl openssl-devel perl-IPC-Cmd # lapack-devel blas-devel openblas-devel
+                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 else
-                  yum install -y openssl openssl-devel perl-IPC-Cmd # lapack-devel blas-devel openblas-devel
+                  yum install -y openssl openssl-devel perl-IPC-Cmd lapack-devel blas-devel openblas-devel
                 fi
                 ;;
             esac
@@ -90,7 +90,7 @@ jobs:
           manylinux: musllinux_1_2
           before-script-linux: |
             sudo apt update
-            sudo apt install -y pkg-config libssl-dev gfortran
+            sudo apt install -y pkg-config libssl-dev gfortran liblapack-dev libblas-dev libopenblas-dev
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
@@ -140,6 +140,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+      - name: Install blas
+        run: brew install openblas
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
