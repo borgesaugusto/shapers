@@ -22,6 +22,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    # - uses: actions/setup-python@v5
     - name: Install dependencies
       run: |
         sudo apt update
@@ -42,6 +43,7 @@ jobs:
             target: aarch64
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
     # - name: Install dependencies
     #   run: |
     #     sudo apt update
@@ -62,6 +64,7 @@ jobs:
             target: x86
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
     # - name: Install dependencies
     #   run: |
     #     sudo apt update
