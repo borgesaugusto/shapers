@@ -42,10 +42,8 @@ jobs:
             target: aarch64
     steps:
     - uses: actions/checkout@v4
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        # sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
+    # - name: Install dependencies
+      # run: |
     - name: Build
       run: cargo build --verbose
     - name: Run tests
@@ -62,10 +60,8 @@ jobs:
             target: x86
     steps:
     - uses: actions/checkout@v4
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        # sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
+    # - name: Install dependencies
+      # run: |
     - name: Build
       run: cargo build --verbose
     - name: Run tests
