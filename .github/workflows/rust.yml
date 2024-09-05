@@ -42,9 +42,10 @@ jobs:
             target: aarch64
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
     # - name: Install dependencies
-      # run: |
+    #   run: |
+    #     sudo apt update
+    #     # sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
@@ -61,9 +62,10 @@ jobs:
             target: x86
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
     # - name: Install dependencies
-      # run: |
+    #   run: |
+    #     sudo apt update
+    #     # sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
