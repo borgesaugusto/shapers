@@ -12,13 +12,13 @@ env:
 jobs:
   linux:
     runs-on: ${{ matrix.platform.runner }}
-  strategy:
-      matrix:
-        platform:
-          - runner: ubuntu-latest
-            target: x86_64
-          - runner: ubuntu-latest
-            target: x86
+    strategy:
+        matrix:
+          platform:
+            - runner: ubuntu-latest
+              target: x86_64
+            - runner: ubuntu-latest
+              target: x86
 
     steps:
     - uses: actions/checkout@v4
