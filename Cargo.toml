@@ -1,22 +1,26 @@
 [package]
-  name = "shapers"
-  version = "0.1.0"
-  edition = "2021"
+name = "shapers"
+version = "0.1.0"
+license = "LICENSE"
+description = "A library for fitting shapes and operations on geometrical objects"
+repository = "https://github.com/borgesaugusto/shapers"
+readme = "README.md"
+keywords = ["geometry", "shapes", "circle"]
+categories = ["science", "mathematics"]
+
+edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-  [lib]
+[lib]
 # The name of the native library. This is the name which will be used in Python to import the
 # library (i.e. `import string_sum`). If you change this, you must also change the name of the
 # `#[pymodule]` in `src/lib.rs`.
-  name = "shapers"
+name = "shapers"
 # "cdylib" is necessary to produce a shared library for Python to import from.
 #
 # Downstream Rust code (including code in `bin/`, `examples/`, and `tests/`) will not be able
 # to `use string_sum;` unless the "rlib" or "lib" crate type is also included, e.g.:
-  crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib", "rlib"]
 # crate-type = ["cdylib", "lib"]
-# [features]
-# extension-module = ["pyo3/extension-module"]
-# default = ["extension-module"]
 
 [dependencies]
 pyo3 = { version = "0.22.1", features = ["extension-module"] }
@@ -29,4 +33,4 @@ ndarray-linalg = "0.16.0"
 blas-src = { version = "0.9", features = ["openblas"] }
 
 
-  # openblas-src = { version = "0.10", features = ["cblas", "lapacke", "static"] }
+# openblas-src = { version = "0.10", features = ["cblas", "lapacke"] }
