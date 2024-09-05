@@ -12,7 +12,7 @@ env:
 jobs:
   linux:
     runs-on: ${{ matrix.platform.runner }}
-    strategy:
+  strategy:
       matrix:
         platform:
           - runner: ubuntu-latest
@@ -42,6 +42,7 @@ jobs:
             target: aarch64
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
     # - name: Install dependencies
       # run: |
     - name: Build
@@ -60,6 +61,7 @@ jobs:
             target: x86
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
     # - name: Install dependencies
       # run: |
     - name: Build

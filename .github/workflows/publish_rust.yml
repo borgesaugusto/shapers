@@ -1,0 +1,25 @@
+# Automatically upload create upon new release
+name: Publish to crates.io
+
+on:
+  release:
+    types: [published]
+  # pull_request:
+  # workflow_dispatch:
+
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pacakge and update
+        run: |
+          sudo apt update
+          cargo login ${{ env.CARGO_REGISTRY_TOKEN }}
+          cargo package
+          cargo publish
+
