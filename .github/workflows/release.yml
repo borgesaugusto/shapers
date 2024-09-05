@@ -23,10 +23,10 @@ jobs:
             archive: zip
     steps:
       - uses: actions/checkout@master
-      - uses: actions/setup-python@v5
+      - name: Compile and release
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - name: Compile and release
         uses: rust-build/rust-build.action@v1.4.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
