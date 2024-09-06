@@ -29,7 +29,7 @@ argmin-math = "0.4.0"
 # argmin-observer-slog = "0.1.0"
 ndarray = "0.15.6"
 ndarray-linalg = "0.16.0"
-
+finitediff = { version = "0.1.4", features = ["ndarray"] }
 blas-src = { version = "0.9", features = ["openblas"] }
 
 

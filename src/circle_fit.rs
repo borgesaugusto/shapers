@@ -1,12 +1,14 @@
-use crate::{aux_funcs::{get_distance, get_circle_centroid, self}, errors::LSQError};
+use crate::{aux_funcs::{get_circle_centroid, self}, errors::LSQError};
 use argmin::{
     core::{observers::ObserverMode, CostFunction, Error, Executor, State, OptimizationResult, Gradient},
     solver::{neldermead::NelderMead, linesearch::MoreThuenteLineSearch, quasinewton::LBFGS},
 }; 
+use finitediff::FiniteDiff;
 use ndarray::{s, array, Array1, Array, stack, Axis, concatenate};
 use ndarray_linalg::SVD;
 // use argmin_observer_slog::SlogLogger;
 use pyo3::prelude::*;
+
 
 /// Manages the Circle functions, to then implement [`Circle::CostFunction`] and [`Circle::Gradient`]
 pub struct Circle {
@@ -18,10 +20,16 @@ pub struct Circle {
 }
 
 impl Circle {
-    fn mean_distance_to_center(&self, center: Vec<f64>) -> f64 {
+    fn get_distance_to_ave(&self, center: Vec<f64>) -> Vec<f64> {
         let xs = &self.xs;
         let ys = &self.ys;
-        let distances: Vec<f64> = xs.iter().zip(ys.iter()).map(|(x, y)| get_distance(vec![*x, *y], center.clone())).collect();
+        let distances: Vec<f64> = xs.iter().zip(ys.iter()).map(|(x, y)| ((x - &center[0]).powi(2) + (y - &center[1]).powi(2)).sqrt()).collect(); 
+        let average = distances.iter().sum::<f64>() / distances.len() as f64;
+        distances.iter().map(|x| (x - average).powi(2)).collect()
+
+    }
+    fn mean_distance_to_center(&self, center: Vec<f64>) -> f64 {
+        let distances = &self.get_distance_to_ave(center);
         let average = distances.iter().sum::<f64>() / distances.len() as f64;
         distances.iter().map(|x| (x - average).powi(2)).sum::<f64>()
     }
@@ -47,20 +55,17 @@ impl Gradient for Circle {
     type Param = Vec<f64>;
     type Gradient = Vec<f64>;
 
-    fn gradient(&self, pararms: &Self::Param) -> Result<Self::Gradient, Error> {
-        let deriv_x = self.xs.iter().map(|x| -(x - pararms[0])).sum();
-        let deriv_y = self.ys.iter().map(|y| -(y - pararms[1])).sum();
-        
-        let jacobian = vec![deriv_x, deriv_y];
-
-        Ok(jacobian)
+    fn gradient(&self, params: &Self::Param) -> Result<Self::Gradient, Error> {
+        let f = |x: &Vec<f64>| self.cost(x).unwrap();
+        let point = vec![params[0], params[1]];
+        Ok(point.forward_diff(&f))
 
     }
 }
 /// Finds the probable center by taking the average of the points
 #[pyfunction]
 pub fn fit_geometrical(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
-    aux_funcs::get_circle_centroid(xs, ys)
+    aux_funcs::get_circle_centroid(&xs, &ys)
 }
 
 /// Fits the cirlce using a Least-Squares methods. Currently, only Nelder-Mead and L-BFGS are supported.
@@ -93,15 +98,19 @@ pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>, method: Option<&str>) -> Result<Vec<f
 
 #[pyfunction]
 pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
-    let c0 = get_circle_centroid(xs.clone(), ys.clone());
+    let c0 = get_circle_centroid(&xs, &ys);
     let x_rel_center = xs.iter().map(|x| x - c0[0]).collect::<Vec<f64>>();
     let y_rel_center = ys.iter().map(|y| y - c0[1]).collect::<Vec<f64>>();
     
     let z_value = x_rel_center.iter().zip(y_rel_center.iter()).map(|(x, y)| x * x + y * y).collect::<Vec<f64>>();
+    // let mut z_value: Vec<f64> = vec![];
+    // for i in 0..x_rel_center.len() {
+    //     z_value.push(x_rel_center[i] * x_rel_center[i] + y_rel_center[i] * y_rel_center[i]);
+    // }
     let z_mean = z_value.iter().sum::<f64>() / z_value.len() as f64;
     let z0 = z_value.iter().map(|z_value_i| (z_value_i - z_mean) / (2.0 * z_mean.sqrt())).collect::<Vec<f64>>();
-    let x_matrix = Array1::from(x_rel_center.clone());
-    let y_matrix = Array1::from(y_rel_center.clone());
+    let x_matrix = Array1::from(x_rel_center);
+    let y_matrix = Array1::from(y_rel_center);
     let z_matrix = Array1::from(z0.clone());
 
     let zxy_matrix = stack![Axis(0), z_matrix, x_matrix, y_matrix].t().to_owned();
@@ -110,10 +119,10 @@ pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
     
     let mut v = vt.unwrap().t().to_owned();
     let mut second_column_v = v.column_mut(2);
-    second_column_v[0] = second_column_v[0] / 2.0 * z_mean.sqrt();
+    second_column_v[0] = second_column_v[0] / (2.0 * z_mean.sqrt());
     let a_matrix = concatenate![Axis(0), second_column_v,  array![- 1.0 * z_mean * second_column_v[0]]];
 
-    let middle_matrix = a_matrix.slice(s![1..3]).mapv(|x| -2.0 * x / a_matrix[0]) + Array::from_vec(c0);
+    let middle_matrix = a_matrix.slice(s![1..3]).t().mapv(|x| -1.0 * x / a_matrix[0] / 2.0) + Array::from_vec(c0);
 
     return vec![middle_matrix[0], middle_matrix[1]];
 }
@@ -125,7 +134,7 @@ pub fn lsq_nelder_mead(circle: Circle) -> Result<OptimizationResult<Circle, Neld
     let mut simplicial_vertices = vec![];
     let geom_center = circle.get_circle_centroid();
     let ave_distance = circle.mean_distance_to_center(geom_center.clone());
-    let n_vertices = 20;
+    let n_vertices = 10;
     for i in 0..n_vertices {
         let angle = 2.0 * std::f64::consts::PI * (i as f64) / n_vertices as f64;
         let x = geom_center[0] + ave_distance * 5.0 * (angle as f64).cos();
@@ -144,8 +153,8 @@ pub fn lsq_nelder_mead(circle: Circle) -> Result<OptimizationResult<Circle, Neld
 
 
 pub fn lsq_lbfgs(circle: Circle) -> Result<OptimizationResult<Circle, LBFGS<MoreThuenteLineSearch<Vec<f64>, Vec<f64>, f64>, Vec<f64>, Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, Vec<f64>, (), (), (), f64>>, LSQError> {
-    let initial_params = vec![0.0, 0.0];
-    let line_search = MoreThuenteLineSearch::new().with_c(1e-4, 0.9)?;
+    let initial_params = circle.get_circle_centroid();
+    let line_search = MoreThuenteLineSearch::new().with_c(1e-6, 0.9)?;
     let lbfgs = LBFGS::new(line_search, 7);
     let result = Executor::new(circle, lbfgs)
         .configure(|state| state.param(initial_params).max_iters(100))
