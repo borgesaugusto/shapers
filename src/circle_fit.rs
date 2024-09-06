@@ -103,10 +103,6 @@ pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
     let y_rel_center = ys.iter().map(|y| y - c0[1]).collect::<Vec<f64>>();
     
     let z_value = x_rel_center.iter().zip(y_rel_center.iter()).map(|(x, y)| x * x + y * y).collect::<Vec<f64>>();
-    // let mut z_value: Vec<f64> = vec![];
-    // for i in 0..x_rel_center.len() {
-    //     z_value.push(x_rel_center[i] * x_rel_center[i] + y_rel_center[i] * y_rel_center[i]);
-    // }
     let z_mean = z_value.iter().sum::<f64>() / z_value.len() as f64;
     let z0 = z_value.iter().map(|z_value_i| (z_value_i - z_mean) / (2.0 * z_mean.sqrt())).collect::<Vec<f64>>();
     let x_matrix = Array1::from(x_rel_center);
