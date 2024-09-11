@@ -1,6 +1,6 @@
 use crate::{aux_funcs::{get_circle_centroid, self}, errors::LSQError};
 use argmin::{
-    core::{observers::ObserverMode, CostFunction, Error, Executor, State, OptimizationResult, Gradient},
+    core::{observers::ObserverMode, CostFunction, Error, State, Executor, OptimizationResult, Gradient},
     solver::{neldermead::NelderMead, linesearch::MoreThuenteLineSearch, quasinewton::LBFGS},
 }; 
 use finitediff::FiniteDiff;
@@ -18,7 +18,6 @@ pub struct Circle {
     pub ys: Vec<f64>,
 
 }
-
 impl Circle {
     fn get_distance_to_ave(&self, center: Vec<f64>) -> Vec<f64> {
         let xs = &self.xs;
@@ -62,33 +61,92 @@ impl Gradient for Circle {
 
     }
 }
+#[pyclass]
+#[derive(Clone, Debug)]
+pub struct FitCircleParams {
+    #[pyo3(get, set)]
+    method: String,
+    #[pyo3(get, set)]
+    precision: f64,
+    #[pyo3(get, set)]
+    n_vertices: i8,
+    #[pyo3(get, set)]
+    max_iters: u64,
+}
+#[pymethods]
+impl FitCircleParams {
+    #[new]
+    pub fn py_new() -> Self {
+        FitCircleParams::new()
+        }
+}
+
+
+
+impl FitCircleParams {
+    pub fn new() -> Self {
+        FitCircleParams {
+            precision: 1e-15_f64,
+            n_vertices: 10,
+            max_iters: 1000,
+            method: "lbfgs".to_string(),
+        }
+    }
+    pub fn with_precision(mut self, precision: f64) -> Self {
+        self.precision = precision;
+        self
+    }
+    // #[setter]
+    pub fn with_n_vertices(mut self, n_vertices: i8) -> Self {
+        self.n_vertices = n_vertices;
+        self
+    }
+    // #[setter]
+    pub fn with_max_iters(mut self, max_iters: u64) -> Self {
+        self.max_iters = max_iters;
+        self
+    }
+    pub fn with_method(mut self, method: &str) -> Self {
+        self.method = method.to_string();
+        self
+    }
+
+}
+
 /// Finds the probable center by taking the average of the points
+// impl FitCircleParams {
 #[pyfunction]
 pub fn fit_geometrical(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
     aux_funcs::get_circle_centroid(&xs, &ys)
 }
+// }
 
 /// Fits the cirlce using a Least-Squares methods. Currently, only Nelder-Mead and L-BFGS are supported.
 #[pyfunction]
-#[pyo3(signature = (xs, ys, method="lbfgs"))]
-pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>, method: Option<&str>) -> Result<Vec<f64>, LSQError> {
+#[pyo3(signature = (xs, ys, circle_parameters=None))]
+pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>, circle_parameters: Option<FitCircleParams>) -> Result<Vec<f64>, LSQError> {
     if xs.len() != ys.len() {
         eprint!("The number of x and y points must be the same.");
     }
-
     let circle = Circle { xs: xs.clone(), ys: ys.clone() };
-    let method = Some(method.unwrap_or("lbfgs"));
-    match method {
-        Some("nelder_mead") => {
+    // let parameters = Parameters::new();
+    let parameters = if let Some(parameters) = circle_parameters {
+        parameters
+    }
+    else {
+        FitCircleParams::new()
+    };
+    match parameters.method.as_str() {
+        "nelder_mead" => {
             // let final_result = lsq_nelder_mead(xs, ys).unwrap();
             if xs.len() > 10000 {
                 eprint!("The number of points is too high. Might lead to performance issues");
             }
-            let final_result = lsq_nelder_mead(circle).unwrap();
+            let final_result = lsq_nelder_mead(circle, parameters).unwrap();
             Ok(final_result.state.get_best_param().expect("Found params").to_vec())
         },
-        Some("lbfgs") => {
-            let final_result = lsq_lbfgs(circle).unwrap();
+        "lbfgs" => {
+            let final_result = lsq_lbfgs(circle, parameters).unwrap();
             Ok(final_result.state.get_best_param().expect("Found params").to_vec())
         },
         _ => todo!(),
@@ -125,12 +183,12 @@ pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
 
 
 // methods for differnt lsq algorithms
-pub fn lsq_nelder_mead(circle: Circle) -> Result<OptimizationResult<Circle, NelderMead<Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, (), (), (), (), f64>>, LSQError> 
+pub fn lsq_nelder_mead(circle: Circle, parameters: FitCircleParams) -> Result<OptimizationResult<Circle, NelderMead<Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, (), (), (), (), f64>>, LSQError> 
 {
     let mut simplicial_vertices = vec![];
     let geom_center = circle.get_circle_centroid();
     let ave_distance = circle.mean_distance_to_center(geom_center.clone());
-    let n_vertices = 10;
+    let n_vertices = parameters.n_vertices;
     for i in 0..n_vertices {
         let angle = 2.0 * std::f64::consts::PI * (i as f64) / n_vertices as f64;
         let x = geom_center[0] + ave_distance * 5.0 * (angle as f64).cos();
@@ -141,19 +199,19 @@ pub fn lsq_nelder_mead(circle: Circle) -> Result<OptimizationResult<Circle, Neld
     let nm_solver = NelderMead::new(simplicial_vertices)
                                 .with_sd_tolerance(1e-15_f64)?;
     let result = Executor::new(circle, nm_solver)
-        .configure(|state| state.max_iters(1000))
+        .configure(|state| state.max_iters(parameters.max_iters))
         // .add_observer(SlogLogger::term(), ObserverMode::Always)
         .run();
     Ok(result.unwrap())
 }
 
 
-pub fn lsq_lbfgs(circle: Circle) -> Result<OptimizationResult<Circle, LBFGS<MoreThuenteLineSearch<Vec<f64>, Vec<f64>, f64>, Vec<f64>, Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, Vec<f64>, (), (), (), f64>>, LSQError> {
+pub fn lsq_lbfgs(circle: Circle, parameters: FitCircleParams) -> Result<OptimizationResult<Circle, LBFGS<MoreThuenteLineSearch<Vec<f64>, Vec<f64>, f64>, Vec<f64>, Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, Vec<f64>, (), (), (), f64>>, LSQError> {
     let initial_params = circle.get_circle_centroid();
-    let line_search = MoreThuenteLineSearch::new().with_c(1e-6, 0.9)?;
-    let lbfgs = LBFGS::new(line_search, 7);
+    let line_search = MoreThuenteLineSearch::new().with_c(parameters.precision, 0.9)?;
+    let lbfgs = LBFGS::new(line_search, 5);
     let result = Executor::new(circle, lbfgs)
-        .configure(|state| state.param(initial_params).max_iters(100))
+        .configure(|state| state.param(initial_params).max_iters(parameters.max_iters))
         // .add_observer(SlogLogger::term(), ObserverMode::Always)
         .run();
 
@@ -166,19 +224,21 @@ mod tests {
     use super::*;
     #[test]
     fn test_fit_nelder_mead() {
+        let parameters = FitCircleParams::new().with_method("nelder_mead");
         let precision: f64 = 100000000.0;
         let xs = vec![-1.0, 0.0, 1.0, 0.0];
         let ys = vec![0.0, 1.0, 0.0, -1.0];
-        let mut res = fit_lsq(xs, ys, Some("nelder_mead"));
+        let mut res = fit_lsq(xs, ys, Some(parameters));
         res = res.map(|x| x.iter().map(|y| ( y.round() * precision ) / precision).collect());
         assert_eq!(res.unwrap(), vec![0.0, 0.0]);
     }
     #[test]
     fn test_fit_lbgs() {
+        let parameters = FitCircleParams::new().with_method("lbfgs");
         let precision: f64 = 100000000.0;
         let xs = vec![-1.0, 0.0, 1.0, 0.0];
         let ys = vec![0.0, 1.0, 0.0, -1.0];
-        let mut res = fit_lsq(xs, ys, Some("lbfgs"));
+        let mut res = fit_lsq(xs, ys, Some(parameters));
         res = res.map(|x| x.iter().map(|y| ( y.round() * precision ) / precision).collect());
         assert_eq!(res.unwrap(), vec![0.0, 0.0]);
     }
