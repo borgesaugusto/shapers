@@ -47,8 +47,8 @@ arrx = circle_center[0] + (circle_radius * np.random.normal(1, 0.1)) * np.cos(th
 arry = circle_center[1] + (circle_radius * np.random.normal(1, 0.1)) * np.sin(theta)
 ###
 x_center, y_center = shrs.taubin_svd(arrx, arry)
-# x_center, y_center = srs.fit_geometrical(arrx, arry)
-# x_center, y_center = srs.fit_lsq(arrx, arry)
+# x_center, y_center = shrs.fit_geometrical(arrx, arry)
+# x_center, y_center = shrs.fit_lsq(arrx, arry)
 ```
 
 It is possible to modify the parameters of the algorithm through the `FitCircleParams` class. To do it, you can
