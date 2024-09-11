@@ -1,4 +1,4 @@
-[![Crates.io Version](https://img.shields.io/crates/v/shapers)](https://crates.io/crates/shapers)]
+[![Crates.io Version](https://img.shields.io/crates/v/shapers)](https://crates.io/crates/shapers)
 [![PyPI - Version](https://img.shields.io/pypi/v/shapers)](https://pypi.org/project/shapers/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/shapers)](https://pypi.org/project/shapers/)
 # Shapers
