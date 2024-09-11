@@ -22,6 +22,7 @@ extern crate blas_src;
 
 #[pymodule]
 fn shapers(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<circle_fit::FitCircleParams>()?;
     m.add_function(wrap_pyfunction!(circle_fit::taubin_svd, m)?)?;
     m.add_function(wrap_pyfunction!(circle_fit::fit_geometrical, m)?)?;
     m.add_function(wrap_pyfunction!(circle_fit::fit_lsq, m)?)?;

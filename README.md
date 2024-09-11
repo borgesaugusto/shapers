@@ -1,3 +1,6 @@
+[![Crates.io Version](https://img.shields.io/crates/v/shapers)(https://crates.io/crates/shapers)]]
+[![PyPI - Version](https://img.shields.io/pypi/v/shapers)](https://pypi.org/project/shapers/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/shapers)](https://pypi.org/project/shapers/)
 # Shapers
 Fitting shapes with Rust in python
 
@@ -35,15 +38,35 @@ Currently, to the exposed functions are
 ```python
 import shapers as shrs
 
+# create an artificial circle as an example
 circle_center = [5, 5]
 circle_radius = 5
 n_points = 50
-
 theta = np.linspace(0, 2 * np.pi, n_points)
-
 arrx = circle_center[0] + (circle_radius * np.random.normal(1, 0.1)) * np.cos(theta)
 arry = circle_center[1] + (circle_radius * np.random.normal(1, 0.1)) * np.sin(theta)
-x_center, y_center = srs.taubin_svd(arrx, arry)
-# x_center, y_center = srs.fit_geometrical(arrx, arry)
-# x_center, y_center = srs.fit_lsq(arrx, arry)
+###
+x_center, y_center = shrs.taubin_svd(arrx, arry)
+# x_center, y_center = shrs.fit_geometrical(arrx, arry)
+# x_center, y_center = shrs.fit_lsq(arrx, arry)
 ```
+
+It is possible to modify the parameters of the algorithm through the `FitCircleParams` class. To do it, you can
+```python
+import shapers as shrs
+
+# create an artificial circle as an example
+circle_center = [5, 5]
+circle_radius = 5
+n_points = 50
+theta = np.linspace(0, 2 * np.pi, n_points)
+arrx = circle_center[0] + (circle_radius * np.random.normal(1, 0.1)) * np.cos(theta)
+arry = circle_center[1] + (circle_radius * np.random.normal(1, 0.1)) * np.sin(theta)
+### 
+parameters = shrs.FitCircleParams()
+parameters.method = "lbfgs"
+parameters.precision = 1e-4
+parameters.max_iterations = 1000
+x_center, y_center = shrs.fit_lsq(arrx, arry, parameters)
+```
+Each method might have specific parameters. For more information, please refer to the documentation of the method.

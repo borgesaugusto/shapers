@@ -1,6 +1,6 @@
 [package]
 name = "shapers"
-version = "0.2.0"
+version = "0.3.0"
 license-file = "LICENSE"
 description = "A library for fitting shapes and operations on geometrical objects"
 repository = "https://github.com/borgesaugusto/shapers"
