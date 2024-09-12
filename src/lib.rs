@@ -14,6 +14,8 @@
 
 /// Module for circle fitting functions
 pub mod circle_fit;
+/// Module for ellipsoid operations (Superposition)
+pub mod ellipsoids;
 mod aux_funcs;
 /// Module for native error types
 pub mod errors;
@@ -27,5 +29,9 @@ fn shapers(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(circle_fit::fit_geometrical, m)?)?;
     m.add_function(wrap_pyfunction!(circle_fit::fit_lsq, m)?)?;
     
+
+    m.add_class::<ellipsoids::EllipsoidIntersectionParameters>()?;
+    m.add_class::<ellipsoids::Ellipsoid>()?;
+    m.add_function(wrap_pyfunction!(ellipsoids::check_ellipsoid_intersection, m)?)?;
     Ok(())
 }

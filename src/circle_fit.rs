@@ -63,6 +63,7 @@ impl Gradient for Circle {
 }
 #[pyclass]
 #[derive(Clone, Debug)]
+/// Parameters for the circle fitting
 pub struct FitCircleParams {
     #[pyo3(get, set)]
     method: String,
@@ -84,6 +85,7 @@ impl FitCircleParams {
 
 
 impl FitCircleParams {
+    /// Creates a new instance of the struct
     pub fn new() -> Self {
         FitCircleParams {
             precision: 1e-15_f64,
@@ -92,20 +94,22 @@ impl FitCircleParams {
             method: "lbfgs".to_string(),
         }
     }
+    /// Sets the precision for the optimization
     pub fn with_precision(mut self, precision: f64) -> Self {
         self.precision = precision;
         self
     }
-    // #[setter]
+    /// Sets the number of vertices for the Nelder-Mead optimization
     pub fn with_n_vertices(mut self, n_vertices: i8) -> Self {
         self.n_vertices = n_vertices;
         self
     }
-    // #[setter]
+    /// Sets the maximum number of iterations for the optimization
     pub fn with_max_iters(mut self, max_iters: u64) -> Self {
         self.max_iters = max_iters;
         self
     }
+    /// Sets the optimization method. Either nelder_mead or lbfgs
     pub fn with_method(mut self, method: &str) -> Self {
         self.method = method.to_string();
         self
@@ -153,7 +157,14 @@ pub fn fit_lsq(xs: Vec<f64>, ys: Vec<f64>, circle_parameters: Option<FitCirclePa
     }
 }
 
-
+/// Fits the circle using the Taubin SVD method
+/// # Examples
+/// ```
+/// use shapers::circle_fit::taubin_svd;
+/// let xs = vec![0.0, 4.0, 2.0, 2.0];
+/// let ys = vec![0.0, 0.0, 2.0, -2.0];
+/// assert_eq!(taubin_svd(xs, ys), vec![2.0, 0.0]);
+/// ```
 #[pyfunction]
 pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
     let c0 = get_circle_centroid(&xs, &ys);
@@ -182,7 +193,7 @@ pub fn taubin_svd(xs: Vec<f64>, ys: Vec<f64>) -> Vec<f64> {
 }
 
 
-// methods for differnt lsq algorithms
+/// methods for differnt lsq algorithms
 pub fn lsq_nelder_mead(circle: Circle, parameters: FitCircleParams) -> Result<OptimizationResult<Circle, NelderMead<Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, (), (), (), (), f64>>, LSQError> 
 {
     let mut simplicial_vertices = vec![];
@@ -205,7 +216,7 @@ pub fn lsq_nelder_mead(circle: Circle, parameters: FitCircleParams) -> Result<Op
     Ok(result.unwrap())
 }
 
-
+/// Fit the circle using the LBFGS method
 pub fn lsq_lbfgs(circle: Circle, parameters: FitCircleParams) -> Result<OptimizationResult<Circle, LBFGS<MoreThuenteLineSearch<Vec<f64>, Vec<f64>, f64>, Vec<f64>, Vec<f64>, f64>, argmin::core::IterState<Vec<f64>, Vec<f64>, (), (), (), f64>>, LSQError> {
     let initial_params = circle.get_circle_centroid();
     let line_search = MoreThuenteLineSearch::new().with_c(parameters.precision, 0.9)?;
