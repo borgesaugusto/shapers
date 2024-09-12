@@ -23,3 +23,7 @@ ndarray = "0.15.6"
 ndarray-linalg = "0.16.0"
 finitediff = { version = "0.1.4", features = ["ndarray"] }
 blas-src = { version = "0.9", features = ["openblas"] }
+
+
+[package.metadata.docs.rs]
+features = [ "openblas-static" ]
