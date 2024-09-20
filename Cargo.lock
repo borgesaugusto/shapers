@@ -808,7 +808,6 @@ dependencies = [
  "finitediff",
  "ndarray",
  "ndarray-linalg",
- "openblas-src",
  "pyo3",
 ]
 
