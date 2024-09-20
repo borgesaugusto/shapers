@@ -83,6 +83,8 @@ jobs:
         triplet: x64-windows
         token: ${{ github.token }}
         github-binarycache: true
+    - name: Integrate vcpkg
+      run: vcpkg integrate install
     - name: Build
       run: cargo build --verbose
     - name: Run tests
