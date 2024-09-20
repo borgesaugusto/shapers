@@ -800,7 +800,7 @@ dependencies = [
 
 [[package]]
 name = "shapers"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "argmin",
  "argmin-math",
@@ -809,6 +809,7 @@ dependencies = [
  "ndarray",
  "ndarray-linalg",
  "pyo3",
+ "vcpkg",
 ]
 
 [[package]]

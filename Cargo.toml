@@ -24,6 +24,5 @@ ndarray-linalg = "0.16.0"
 finitediff = { version = "0.1.4", features = ["ndarray"] }
 blas-src = { version = "0.9", features = ["openblas"] }
 
-
-[package.metadata.docs.rs]
-features = [ "openblas-static"]
+[target.'cfg(target_os="windows")'.build-dependencies]
+vcpkg = "0.2"
