@@ -1,6 +1,6 @@
 [package]
 name = "shapers"
-version = "0.3.0"
+version = "0.3.1"
 license-file = "LICENSE"
 description = "A library for fitting shapes and operations on geometrical objects"
 repository = "https://github.com/borgesaugusto/shapers"
@@ -22,8 +22,7 @@ argmin-math = "0.4.0"
 ndarray = "0.15.6"
 ndarray-linalg = "0.16.0"
 finitediff = { version = "0.1.4", features = ["ndarray"] }
-blas-src = { version = "0.9", features = ["openblas"] }
+blas-src = { version = "0.10", features = ["openblas"] }
 
-
-[package.metadata.docs.rs]
-features = [ "openblas-static" ]
+# [target.'cfg(target_os="windows")'.dependencies]
+openblas-src = { version = "0.10", features = ["system"] }
