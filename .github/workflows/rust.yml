@@ -2,9 +2,9 @@ name: Rust general tests
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -80,7 +80,7 @@ jobs:
       id: vcpkg
       with:
         pkgs: openblas
-        triplet: {{matrix.platform.target}}-windows
+        triplet: x64-windows
         token: ${{ github.token }}
         github-binarycache: true
     - name: Integrate vcpkg
