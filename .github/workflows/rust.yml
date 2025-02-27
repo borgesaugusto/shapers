@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        # sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
+        sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
@@ -80,7 +80,7 @@ jobs:
       id: vcpkg
       with:
         pkgs: openblas
-        triplet: x64-windows
+        triplet: {{ matrix.platform.target}}-windows
         token: ${{ github.token }}
         github-binarycache: true
     - name: Integrate vcpkg
