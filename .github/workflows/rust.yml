@@ -93,7 +93,7 @@ jobs:
       run: |
         vcpkg install openblas --triplet ${{ matrix.platform.target }}-windows
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --target ${{ matrix.platform.target }}-pc-windows-msvc --verbose
     - name: Run tests
       run: cargo test --verbose
   #
