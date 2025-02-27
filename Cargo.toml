@@ -15,7 +15,7 @@ name = "shapers"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-pyo3 = { version = "0.22.1", features = ["extension-module"] }
+pyo3 = { version = "0.23", features = ["extension-module"] }
 argmin = "0.10.0"
 argmin-math = "0.4.0"
 # argmin-observer-slog = "0.1.0"
