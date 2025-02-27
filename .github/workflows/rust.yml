@@ -75,16 +75,20 @@ jobs:
             target: x86
     steps:
     - uses: actions/checkout@v4
-    - name: vcpkg build
-      uses: johnwason/vcpkg-action@v6
-      id: vcpkg
-      with:
-        pkgs: openblas
-        triplet: x64-windows
-        token: ${{ github.token }}
-        github-binarycache: true
-    - name: Integrate vcpkg
-      run: vcpkg integrate install
+    # - name: vcpkg build
+    #   uses: johnwason/vcpkg-action@v6
+    #   id: vcpkg
+    #   with:
+    #     pkgs: openblas
+    #     triplet: x64-windows
+    #     token: ${{ github.token }}
+    #     github-binarycache: true
+    # - name: Integrate vcpkg
+    #   run: vcpkg integrate install
+    - uses: lukka/run-vcpkg@v11
+      run: |
+        vcpkg install openblas
+        vcpkg integrate install
     - name: Build
       run: cargo build --verbose
     - name: Run tests
