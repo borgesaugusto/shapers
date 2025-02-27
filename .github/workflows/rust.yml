@@ -87,6 +87,8 @@ jobs:
     #   run: vcpkg integrate install
     - name: Setup vcpkg
       uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db # 2024.01.12
     - name: Install vcpkg packages
       run: |
         vcpkg install openblas --triplet {{matrix.platform.target}}-windows
