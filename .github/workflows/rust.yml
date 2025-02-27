@@ -85,10 +85,11 @@ jobs:
     #     github-binarycache: true
     # - name: Integrate vcpkg
     #   run: vcpkg integrate install
-    - uses: lukka/run-vcpkg@v11
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+    - name: Install vcpkg packages
       run: |
-        vcpkg install openblas
-        vcpkg integrate install
+        vcpkg install openblas --triplet {{matrix.platform.target}}-windows
     - name: Build
       run: cargo build --verbose
     - name: Run tests
