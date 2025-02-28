@@ -75,16 +75,6 @@ jobs:
             target: x86
     steps:
     - uses: actions/checkout@v4
-    # - name: vcpkg build
-    #   uses: johnwason/vcpkg-action@v6
-    #   id: vcpkg
-    #   with:
-    #     pkgs: openblas
-    #     triplet: x64-windows
-    #     token: ${{ github.token }}
-    #     github-binarycache: true
-    # - name: Integrate vcpkg
-    #   run: vcpkg integrate install
     - name: Setup vcpkg
       uses: lukka/run-vcpkg@v11
       with:
@@ -95,7 +85,7 @@ jobs:
         vcpkg install openblas --triplet x64-windows-static
     - name: Build
       # run: cargo build --target x86_64-pc-windows-msvc --verbose
-      run: RUSTFLAGS='-C target-feature=+crt-static' cargo build --target x86_64-pc-windows-msvc
+      run: "$env:RUSTFLAGS='-C target-feature=+crt-static' cargo build --target x86_64-pc-windows-msvc"
     - name: Run tests
       run: cargo test --verbose
   #
