@@ -81,7 +81,7 @@ jobs:
         vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db # 2024.01.12
     - name: Install vcpkg packages
       run: |
-        if (${{ matrix.platform.target }} -eq "x86_64") {
+        if ("${{ matrix.platform.target }}" -eq "x86_64") {
           rustup target add x86_64-pc-windows-gnu
           vcpkg install openblas --triplet x64-windows-static
         } else {
