@@ -82,7 +82,7 @@ jobs:
     - name: Install vcpkg packages
       run: |
         # vcpkg install openblas --triplet ${{ matrix.platform.target }}-windows
-        vcpkg install openblas --triplet x64-windows-static
+        vcpkg install openblas --triplet x64-windows
     - name: Build
       # run: cargo build --target x86_64-pc-windows-msvc --verbose
       run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target x86_64-pc-windows-msvc"
