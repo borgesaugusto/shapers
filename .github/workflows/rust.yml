@@ -70,9 +70,9 @@ jobs:
       matrix:
         platform:
           - runner: windows-latest
-            target: x64
+            target: x86_x64
           - runner: windows-latest
-            target: x86
+            target: i686
     steps:
     - uses: actions/checkout@v4
     - name: Setup vcpkg
@@ -85,7 +85,7 @@ jobs:
         vcpkg install openblas --triplet x64-windows-static
     - name: Build
       # run: cargo build --target x86_64-pc-windows-msvc --verbose
-      run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target x86_64-pc-windows-msvc"
+      run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target ${{ matrix.platform.target }}-pc-windows-gnu"
     - name: Run tests
       run: cargo test --verbose
   #
