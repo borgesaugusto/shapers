@@ -81,8 +81,13 @@ jobs:
         vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db # 2024.01.12
     - name: Install vcpkg packages
       run: |
-        # vcpkg install openblas --triplet ${{ matrix.platform.target }}-windows
-        vcpkg install openblas --triplet x64-windows-static
+        if (${{ matrix.platform.target }} -eq "x86_64") {
+          rustup target add x86_64-pc-windows-gnu
+          vcpkg install openblas --triplet x64-windows-static
+        } else {
+          rustup target add i686-pc-windows-gnu
+          vcpkg install openblas --triplet x86-windows-static
+        }
     - name: Build
       # run: cargo build --target x86_64-pc-windows-msvc --verbose
       run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target ${{ matrix.platform.target }}-pc-windows-gnu"
