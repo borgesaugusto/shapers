@@ -85,7 +85,7 @@ jobs:
         vcpkg install openblas --triplet x64-windows-static
     - name: Build
       # run: cargo build --target x86_64-pc-windows-msvc --verbose
-      run: "$env:RUSTFLAGS='-C target-feature=+crt-static' cargo build --target x86_64-pc-windows-msvc"
+      run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target x86_64-pc-windows-msvc"
     - name: Run tests
       run: cargo test --verbose
   #
