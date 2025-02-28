@@ -70,7 +70,7 @@ jobs:
       matrix:
         platform:
           - runner: windows-latest
-            target: x86_x64
+            target: x86_64
           - runner: windows-latest
             target: i686
     steps:
