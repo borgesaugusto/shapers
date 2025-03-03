@@ -75,6 +75,10 @@ jobs:
             target: i686
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+    with:
+      python-version: 3.8
+      architecture: x86
     - name: Setup vcpkg
       uses: lukka/run-vcpkg@v11
       with:
