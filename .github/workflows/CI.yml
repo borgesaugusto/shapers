@@ -114,14 +114,6 @@ jobs:
         with:
           python-version: 3.x
           architecture: ${{ matrix.platform.target }}
-      - name: vcpkg build
-        uses: johnwason/vcpkg-action@v6
-        id: vcpkg
-        with:
-          pkgs: openblas
-          triplet: ${{ matrix.platform.target }}-windows
-          token: ${{ github.token }}
-          github-binarycache: true
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:

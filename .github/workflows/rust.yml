@@ -71,30 +71,26 @@ jobs:
         platform:
           - runner: windows-latest
             target: x86_64
-          - runner: windows-latest
-            target: i686
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
         python-version: 3.8
         architecture: ${{ matrix.platform.target == 'i686' && 'x86' || 'x64' }}
-    - name: Setup vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db # 2024.01.12
-    - name: Install vcpkg packages
-      run: |
-        if ("${{ matrix.platform.target }}" -eq "x86_64") {
-          rustup target add x86_64-pc-windows-gnu
-          vcpkg install openblas --triplet x64-windows-static
-        } else {
-          rustup target add i686-pc-windows-gnu
-          vcpkg install openblas --triplet x86-windows-static
-        }
+    # - name: Setup vcpkg
+    #   uses: lukka/run-vcpkg@v11
+    #   with:
+    #     vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db # 2024.01.12
+    # - name: Install vcpkg packages
+    #   run: |
+    #     if ("${{ matrix.platform.target }}" -eq "x86_64") {
+    #       rustup target add x86_64-pc-windows-gnu
+    #     } else {
+    #       rustup target add i686-pc-windows-gnu
+    #     }
     - name: Build
-      # run: cargo build --target x86_64-pc-windows-msvc --verbose
-      run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target ${{ matrix.platform.target }}-pc-windows-msvc"
+      run: cargo build --verbose
+    #   run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target ${{ matrix.platform.target }}-pc-windows-msvc"
     - name: Run tests
       run: cargo test --verbose
   #
