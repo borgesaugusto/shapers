@@ -20,7 +20,7 @@ mod aux_funcs;
 /// Module for native error types
 pub mod errors;
 use pyo3::prelude::*;
-extern crate blas_src;
+// extern crate blas_src;
 
 #[pymodule]
 fn shapers(m: &Bound<'_, PyModule>) -> PyResult<()> {

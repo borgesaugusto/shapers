@@ -28,62 +28,69 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        # sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
+        sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --lib --verbose
     - name: Run tests
       run: cargo test --verbose
 
- #  macos:
- #    runs-on: ${{ matrix.platform.runner }}
- #    strategy:
- #      matrix:
- #        platform:
- #          - runner: macos-12
- #            target: x86_64
- #          # - runner: macos-14
- #          #   target: aarch64
- #    steps:
- #    - uses: actions/checkout@v4
- #    - uses: actions/setup-python@v5
- #      with:
- #        python-version: 3.x
- #    # - name: Install dependencies
- #    #   run: |
- #    #     sudo apt update
- #    #     # sudo apt-ge- 
- #    - name: Install latest rust toolchain
- #      uses: actions-rs/toolchain@v1
- #      with:
- #        toolchain: beta
- #        target: x86_64-apple-darwin
- #        default: true
- #        override: true
- #    - name: Build
- #      run: cargo build --verbose
- #    - name: Run tests
- #      run: cargo test --verbose
- # 
-  # windows:
-  #   runs-on: ${{ matrix.platform.runner }}
-  #   strategy:
-  #     matrix:
-  #       platform:
-  #         - runner: windows-latest
-  #           target: x64
-  #         - runner: windows-latest
-  #           target: x86
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - uses: actions/setup-python@v5
-  #     with:
-  #       python-version: 3.x
-  #   # - name: Install dependencies
-  #   #   run: |
-  #   #     sudo apt update
-  #   #     # sudo apt-get install -y liblapack-dev libblas-dev libopenblas-dev
-  #   - name: Build
-  #     run: cargo build --verbose
-  #   - name: Run tests
-  #     run: cargo test --verbose
+  macos:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: macos-12
+            target: x86_64
+          # - runner: macos-14
+          #   target: aarch64
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.x
+    # - name: Install dependencies
+    #   run: |
+    #     sudo apt update
+    #     # sudo apt-ge- 
+    - name: Install latest rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: beta
+        target: x86_64-apple-darwin
+        default: true
+        override: true
+    - name: Build
+      run: cargo build --lib --verbose
+    - name: Run tests
+      run: cargo test --verbose
+
+  windows:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: windows-latest
+            target: x86_64
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.8
+        architecture: ${{ matrix.platform.target == 'i686' && 'x86' || 'x64' }}
+    # - name: Setup vcpkg
+    #   uses: lukka/run-vcpkg@v11
+    #   with:
+    #     vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db # 2024.01.12
+    # - name: Install vcpkg packages
+    #   run: |
+    #     if ("${{ matrix.platform.target }}" -eq "x86_64") {
+    #       rustup target add x86_64-pc-windows-gnu
+    #     } else {
+    #       rustup target add i686-pc-windows-gnu
+    #     }
+    - name: Build
+      run: cargo build --lib --verbose
+    #   run: "$env:RUSTFLAGS='-C target-feature=+crt-static'; cargo build --target ${{ matrix.platform.target }}-pc-windows-msvc"
+    - name: Run tests
+      run: cargo test --verbose
   #
