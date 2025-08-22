@@ -1,6 +1,6 @@
 [package]
 name = "shapers"
-version = "0.3.2"
+version = "0.3.3"
 license-file = "LICENSE"
 description = "A library for fitting shapes and operations on geometrical objects"
 repository = "https://github.com/borgesaugusto/shapers"
@@ -15,7 +15,7 @@ name = "shapers"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-pyo3 = { version = "0.22.6", features = ["extension-module"] }
+pyo3 = { version = "0.25.1", features = ["extension-module"] }
 argmin = "0.10.0"
 argmin-math = "0.4.0"
 # argmin-observer-slog = "0.1.0"
